@@ -1,4 +1,4 @@
-package io.renren.entity.face;
+package io.renren.vo.face;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
 package io.renren.service;
 
 import com.alibaba.fastjson.JSON;
-import io.renren.entity.face.DetectResult;
-import io.renren.entity.face.MergeFaceResult;
+import io.renren.vo.face.DetectResult;
+import io.renren.vo.face.MergeFaceResult;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
