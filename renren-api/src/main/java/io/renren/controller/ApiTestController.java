@@ -34,7 +34,6 @@ public class ApiTestController {
     @GetMapping("userInfo")
     @ApiOperation(value="获取用户信息", response=UserEntity.class)
     public R userInfo(@ApiIgnore @LoginUser UserEntity user){
-
         return R.ok().put("user", user);
     }
 
