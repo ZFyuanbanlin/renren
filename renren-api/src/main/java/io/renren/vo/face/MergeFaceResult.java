@@ -17,5 +17,6 @@ public class MergeFaceResult {
     private int time_used;
     private String result;
     private String request_id;
+    private String imgUrl;
 }
 

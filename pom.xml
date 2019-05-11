@@ -42,6 +42,8 @@
         <joda.time.version>2.9.9</joda.time.version>
         <lombok.version>1.18.4</lombok.version>
         <swagger.version>2.7.0</swagger.version>
+        <guava.version>27.0.1-jre</guava.version>
+        <comons.lang3.version>3.8.1</comons.lang3.version>
     </properties>
 
     <dependencies>
@@ -166,6 +168,17 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.google.guava</groupId>-->
+<!--            <artifactId>guava</artifactId>-->
+<!--            <version>${guava.version}</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
     </dependencies>
 
     <!-- 阿里云maven仓库 -->

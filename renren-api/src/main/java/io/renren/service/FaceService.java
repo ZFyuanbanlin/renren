@@ -1,12 +1,16 @@
 package io.renren.service;
 
 import com.alibaba.fastjson.JSON;
+import io.renren.config.ImgConfig;
+import io.renren.consts.StateConsts;
 import io.renren.vo.face.DetectResult;
 import io.renren.vo.face.MergeFaceResult;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -31,6 +35,7 @@ import javax.net.ssl.SSLException;
  * @date 2019/5/4 21:57
  */
 @Slf4j
+@Service
 public class FaceService {
 
     private static final String API_KEY = "t7ATTnZ0--ip4zshj-wF-xLnityHHpgu";
@@ -86,25 +91,33 @@ public class FaceService {
      * @param templateFile 模板文件
      * @return
      */
-    public static MergeFaceResult mergeFace(File srcFile, File templateFile) {
+    public MutablePair<Integer, MergeFaceResult> mergeFace(File templateFile, File srcFile) {
         byte[] srcBuff = getBytesFromFile(srcFile);
         byte[] tempBuff = getBytesFromFile(templateFile);
         HashMap<String, String> map = getRequestMap(null);
         try {
             // 获取图片特征
-            DetectResult detectResult = detect(srcBuff);
+            DetectResult detectResult = detect(tempBuff);
+            if (detectResult.getFaces().isEmpty()) {
+                return new MutablePair<>(StateConsts.FAIL, null);
+            }
             DetectResult.FacesBean.FaceRectangleBean faceRectangle = detectResult.getFaces().get(0).getFace_rectangle();
             map.put("template_rectangle", faceRectangle.getTop() + "," + faceRectangle.getLeft() + "," + faceRectangle.getWidth() + "," + faceRectangle.getHeight());
 
             HashMap<String, byte[]> byteMap = new HashMap<>(16);
-            byteMap.put("template_file", srcBuff);
-            byteMap.put("merge_file", tempBuff);
+            byteMap.put("template_file", tempBuff);
+            byteMap.put("merge_file", srcBuff);
             // TODO 这里可以抽出一个换脸方法
             byte[] post = post(MERGE_FACE_URL, map, byteMap);
             MergeFaceResult mergeFaceResult = JSON.parseObject(new String(post), MergeFaceResult.class);
+            if (mergeFaceResult.getResult() == null) {
+                return new MutablePair<>(StateConsts.FAIL, null);
+            }
             // 图片二进制文件
-            saveBase64ImageStringToImage("D://", "11.jpg", mergeFaceResult.getResult());
-            return mergeFaceResult;
+            String url = saveBase64ImageStringToImage(ImgConfig.IMG_PATH, String.valueOf(System.currentTimeMillis()), mergeFaceResult.getResult());
+            mergeFaceResult.setResult("");
+            mergeFaceResult.setImgUrl(ImgConfig.IMG_PRE + url);
+            return new MutablePair<>(StateConsts.SUCC, mergeFaceResult);
         } catch (Exception e) {
             log.error("mergeFace ", e);
         }
@@ -227,21 +240,23 @@ public class FaceService {
         return null;
     }
 
-    public static void saveBase64ImageStringToImage(String directory, String baseName, String base64ImageString) throws IOException {
+    public static String saveBase64ImageStringToImage(String directory, String baseName, String base64ImageString) throws IOException {
         // 图片的格式为 data:image/png;base64,iVBORw0KGgoAAAA...
         // 逗号的前面为图片的格式，逗号后们为图片二进制数据的 Base64 编码字符串
 //        int commaIndex = base64ImageString.indexOf(",");
 //        String extension = base64ImageString.substring(0, commaIndex).replaceAll("data:image/(.+);base64", "$1");
         byte[] content = Base64.decodeBase64(base64ImageString);
-
-        FileUtils.writeByteArrayToFile(new File(directory, baseName + ".jpg"), content);
+        String url = baseName + ".jpg";
+        File file = new File(directory, url);
+        FileUtils.writeByteArrayToFile(file, content);
+        return url;
     }
 
     public static void main(String[] args) throws Exception {
         URL resource = FaceService.class.getClassLoader().getResource("");
         String path = resource.getPath();
-        File srcFile = new File(path + "/static/img/th.jpg");
-        File templateFile = new File(path + "/static/img/th3.jpg");
-        mergeFace(srcFile, templateFile);
+        File srcFile = new File(path + "/static/img/th1.jpg");
+        File templateFile = new File(path + "/static/img/th1.jpg");
+//        mergeFace(templateFile, srcFile);
     }
 }
