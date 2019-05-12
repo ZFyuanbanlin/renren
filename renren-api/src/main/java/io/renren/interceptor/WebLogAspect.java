@@ -1,7 +1,6 @@
 package io.renren.interceptor;
 
-import com.alibaba.fastjson.JSONObject;
-import io.renren.util.IpUtil;
+import io.renren.common.utils.IpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -38,7 +37,7 @@ public class WebLogAspect {
         HttpServletRequest request = attributes.getRequest();
         try {
             log.info("请求开始 请求IP:{},请求地址:{},方法:{},参数名:{},参数值:{}"
-                    , IpUtil.getIpAddress(request)
+                    , IpUtils.getIpAddr(request)
                     , request.getRequestURL().toString()
                     , joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName()
                     , ((CodeSignature) joinPoint.getSignature()).getParameterNames()
@@ -61,7 +60,7 @@ public class WebLogAspect {
         // 记录下请求内容
         try {
             log.info("请求结束 请求IP:{},请求地址:{},方法:{},参数名:{},参数值:{},返回值:{}"
-                    , IpUtil.getIpAddress(request)
+                    , IpUtils.getIpAddr(request)
                     , request.getRequestURL().toString()
                     , joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName()
                     , ((CodeSignature) joinPoint.getSignature()).getParameterNames()

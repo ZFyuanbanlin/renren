@@ -1,27 +1,29 @@
-package io.renren.interceptor;
+package io.renren.common.utils;
 
-import io.renren.config.MailConfig;
+import io.renren.common.config.MailConfig;
 import lombok.SneakyThrows;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 
-public class MailService {
+/**
+ * @author mario
+ */
+public class MailUtil {
 
     private static final String HOST = MailConfig.HOST;
     private static final Integer PORT = MailConfig.PORT;
     private static final String USERNAME = MailConfig.USERNAME;
     private static final String PASSWORD = MailConfig.PASSWORD;
-    private static final String emailForm = MailConfig.EMAILFORM;
-    private static final String timeout = MailConfig.TIMEOUT;
-    private static final String personal = MailConfig.PERSONAL;
-    private static final String subject = MailConfig.SUBJECT;
-    private static final String html = MailConfig.HTML;
+    private static final String EMAILFORM = MailConfig.EMAILFORM;
+    private static final String TIMEOUT = MailConfig.TIMEOUT;
+    private static final String PERSONAL = MailConfig.PERSONAL;
+    private static final String SUBJECT = MailConfig.SUBJECT;
+    private static final String HTML = MailConfig.HTML;
+    private static final String RECIPIENT = MailConfig.RECIPIENT;
     private static JavaMailSenderImpl mailSender = createMailSender();
 
     /**
@@ -37,7 +39,7 @@ public class MailService {
         sender.setPassword(PASSWORD);
         sender.setDefaultEncoding("Utf-8");
         Properties p = new Properties();
-        p.setProperty("mail.smtp.timeout", timeout);
+        p.setProperty("mail.smtp.timeout", TIMEOUT);
         p.setProperty("mail.smtp.auth", "false");
         sender.setJavaMailProperties(p);
         return sender;
@@ -49,8 +51,6 @@ public class MailService {
      * @param to      接受人邮箱
      * @param subject 主题
      * @param html    发送内容
-     * @throws MessagingException           异常
-     * @throws UnsupportedEncodingException 异常
      */
     @SneakyThrows
     public static void sendMail(String to, String subject, String html) {
@@ -58,26 +58,40 @@ public class MailService {
 
         // 设置utf-8或GBK编码，否则邮件会有乱码
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-        messageHelper.setFrom(emailForm, personal);
+        messageHelper.setFrom(EMAILFORM, PERSONAL);
+        messageHelper.setSubject(subject);
+        messageHelper.setText(html, true);
+
         // 设置默认更多发送邮件地址
-        to=to+",sumeirui@qq.com,1009024758@qq.com";
+        to = to + "," + RECIPIENT;
         String[] receiverList = to.split(",");
-        for (String i:receiverList ) {
-            System.out.println(i);
-            messageHelper.setTo(i);
-            messageHelper.setSubject(subject);
-            messageHelper.setText(html, true);
+        for (String receiver : receiverList) {
+            messageHelper.setTo(receiver);
             mailSender.send(mimeMessage);
         }
-//        messageHelper.setTo(to);
-//        messageHelper.setSubject(subject);
-//        messageHelper.setText(html, true);
+    }
+
+    @SneakyThrows
+    public static void sendMail(String subject, String html) {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        // 设置utf-8或GBK编码，否则邮件会有乱码
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        messageHelper.setFrom(EMAILFORM, PERSONAL);
+        // 设置默认更多发送邮件地址;
+        messageHelper.setSubject(subject);
+        messageHelper.setText(html, true);
 //      messageHelper.addAttachment("", new File(""));//附件
-//        mailSender.send(mimeMessage);
+
+        String[] receiverList = RECIPIENT.split(",");
+        for (String receiver : receiverList) {
+            messageHelper.setTo(receiver);
+            mailSender.send(mimeMessage);
+        }
     }
 
 
     public static void main(String[] args) {
-        sendMail("1009024758@qq.com", "测试用", "你好，");
+        sendMail("测试用", "你好，");
     }
 }

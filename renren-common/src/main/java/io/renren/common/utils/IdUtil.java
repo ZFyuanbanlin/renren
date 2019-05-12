@@ -1,4 +1,4 @@
-package io.renren.util;
+package io.renren.common.utils;
 
 import java.util.UUID;
 

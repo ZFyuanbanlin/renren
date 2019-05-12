@@ -4,8 +4,8 @@ public class ExceptionUtil {
 
     /**
      * 获取异常的堆栈信息
-     * 
-     * @param t
+     *
+     * @param e
      * @return
      */
     public static String getStackTrace(Throwable e) {

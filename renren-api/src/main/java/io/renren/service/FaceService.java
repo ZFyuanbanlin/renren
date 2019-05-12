@@ -3,9 +3,7 @@ package io.renren.service;
 import com.alibaba.fastjson.JSON;
 import io.renren.config.ImgConfig;
 import io.renren.consts.StateConsts;
-import io.renren.interceptor.MailService;
-import io.renren.util.ExceptionUtil;
-import io.renren.util.IdUtil;
+import io.renren.common.utils.IdUtil;
 import io.renren.vo.face.DetectResult;
 import io.renren.vo.face.MergeFaceResult;
 import lombok.SneakyThrows;
@@ -13,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -47,6 +46,8 @@ public class FaceService {
      */
     public static final String MERGE_FACE_URL = "https://api-cn.faceplusplus.com/imagepp/v1/mergeface";
 
+    @Autowired
+    private NotifyService notifyService;
 
     /**
      * 获取图片人脸特征
@@ -114,7 +115,7 @@ public class FaceService {
             return new MutablePair<>(StateConsts.SUCC, mergeFaceResult);
         } catch (Exception e) {
             log.error("mergeFace ", e);
-            MailService.sendMail("1009024758@qq.com","图片异常","mergeFace错误信息："+ ExceptionUtil.getStackTrace(e));
+            notifyService.notify(e);
         }
         return null;
     }
@@ -141,7 +142,7 @@ public class FaceService {
      * @param map
      * @return
      */
-    private static HashMap getRequestMap(HashMap map) {
+    private static HashMap<String, String> getRequestMap(HashMap<String, String> map) {
         if (map == null) {
             map = new HashMap<>(16);
         }

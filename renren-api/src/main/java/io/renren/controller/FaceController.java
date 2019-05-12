@@ -67,7 +67,7 @@ public class FaceController {
             return R.ok().put("url", pair.getRight().getImgUrl());
         } catch (Exception e) {
             log.error("Exception ", e);
-            return R.error("上传的图片异常，");
+            return R.error("上传的图片异常");
         }
     }
 
