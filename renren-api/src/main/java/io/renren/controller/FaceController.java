@@ -2,6 +2,7 @@ package io.renren.controller;
 
 import io.renren.common.utils.R;
 import io.renren.service.FaceService;
+import io.renren.util.FileUtil;
 import io.renren.vo.face.MergeFaceResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,9 +55,9 @@ public class FaceController {
             MutablePair<Integer, MergeFaceResult> pair = null;
             if (test) {
                 // 测试
-                pair = faceService.mergeFace(getData(imgUrl), getData("src.jpg"));
+                pair = faceService.mergeFace(FileUtil.getData(IMG_PATH + imgUrl), FileUtil.getData(IMG_PATH + "src.jpg"));
             } else {
-                byte[] tempBuff = getData(imgUrl);
+                byte[] tempBuff = FileUtil.getData(IMG_PATH + imgUrl);
                 byte[] srcBuff = FaceService.getBytesFromStream((FileInputStream) srcFile.getInputStream());
                 pair = faceService.mergeFace(tempBuff, srcBuff);
             }
@@ -70,14 +71,4 @@ public class FaceController {
         }
     }
 
-    public byte[] getData(String fileName) {
-        byte[] buff = new byte[]{};
-        ClassPathResource cpr = new ClassPathResource(IMG_PATH + fileName);
-        try {
-            buff = FileCopyUtils.copyToByteArray(cpr.getInputStream());
-        } catch (Exception e) {
-            log.error("IOException", e);
-        }
-        return buff;
-    }
 }
