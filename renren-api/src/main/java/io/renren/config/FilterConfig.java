@@ -12,6 +12,9 @@ import io.renren.common.xss.XssFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.DispatcherType;
 
@@ -31,5 +34,26 @@ public class FilterConfig {
         registration.addUrlPatterns("/*");
         registration.setName("xssFilter");
         return registration;
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", buildCorsConfig()); // 4 对接口配置跨域设置
+        return new CorsFilter(source);
+    }
+
+    /**
+     * 配置跨域
+     *
+     * @return
+     */
+    private CorsConfiguration buildCorsConfig() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*"); // 1 设置访问源地址
+        corsConfiguration.addAllowedHeader("*"); // 2 设置访问源请求头
+        corsConfiguration.addAllowedMethod("*"); // 3 设置访问源请求方法
+        corsConfiguration.setAllowCredentials(true); // 4 设置证书
+        return corsConfiguration;
     }
 }
