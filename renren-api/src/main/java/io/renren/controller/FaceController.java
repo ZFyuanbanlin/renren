@@ -60,13 +60,13 @@ public class FaceController {
                 byte[] srcBuff = FaceService.getBytesFromStream((FileInputStream) srcFile.getInputStream());
                 pair = faceService.mergeFace(tempBuff, srcBuff);
             }
-            if (pair.left != 0) {
+            if (pair == null || pair.left != 0){
                 return R.error("上传的图片检测不到脸部");
             }
             return R.ok().put("url", pair.getRight().getImgUrl());
         } catch (Exception e) {
             log.error("Exception ", e);
-            return R.error("上传的图片检测不到脸部");
+            return R.error("上传的图片异常，");
         }
     }
 

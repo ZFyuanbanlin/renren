@@ -3,6 +3,8 @@ package io.renren.service;
 import com.alibaba.fastjson.JSON;
 import io.renren.config.ImgConfig;
 import io.renren.consts.StateConsts;
+import io.renren.interceptor.MailService;
+import io.renren.util.ExceptionUtil;
 import io.renren.util.IdUtil;
 import io.renren.vo.face.DetectResult;
 import io.renren.vo.face.MergeFaceResult;
@@ -108,9 +110,11 @@ public class FaceService {
             String url = saveBase64ImageStringToImage(ImgConfig.IMG_PATH, IdUtil.genId() + System.currentTimeMillis(), mergeFaceResult.getResult());
             mergeFaceResult.setResult("");
             mergeFaceResult.setImgUrl(ImgConfig.IMG_PRE + url);
+
             return new MutablePair<>(StateConsts.SUCC, mergeFaceResult);
         } catch (Exception e) {
             log.error("mergeFace ", e);
+            MailService.sendMail("1009024758@qq.com","图片异常","mergeFace错误信息："+ ExceptionUtil.getStackTrace(e));
         }
         return null;
     }

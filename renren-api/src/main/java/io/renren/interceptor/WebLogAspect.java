@@ -65,7 +65,7 @@ public class WebLogAspect {
                     , request.getRequestURL().toString()
                     , joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName()
                     , ((CodeSignature) joinPoint.getSignature()).getParameterNames()
-                    , JSONObject.toJSONString(joinPoint.getArgs())
+                    , Arrays.toString(joinPoint.getArgs())
                     , obj);
         } catch (Exception e) {
             log.error("请求结束 ", e);

@@ -35,6 +35,18 @@ renren:
   redis:
     open: false  # 是否开启redis缓存  true开启   false关闭
 
+cinfo:
+#  mail:
+#    host: smtp.qq.com #服务器
+#    port: 25 #端口号
+#    username: 1009024758@qq.com #邮箱账号
+#    password: rdpnjgnlwcyubcgc #邮箱授权码
+#    timeout: 25000  #时间延迟
+#    mail-from: zf1009024758@foxmail.com #发送人
+#    personal: cinfo #发件人
+#    subject: 111 #主题
+#    html: 错误信息为： #内容模板
+
 
 #mybatis
 mybatis-plus:

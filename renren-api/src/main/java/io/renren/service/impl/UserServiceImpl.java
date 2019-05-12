@@ -17,12 +17,15 @@ import io.renren.dao.UserDao;
 import io.renren.entity.TokenEntity;
 import io.renren.entity.UserEntity;
 import io.renren.form.LoginForm;
+import io.renren.interceptor.MailService;
 import io.renren.service.TokenService;
 import io.renren.service.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,13 +40,15 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 	}
 
 	@Override
-	public Map<String, Object> login(LoginForm form) {
+	public Map<String, Object> login(LoginForm form) throws UnsupportedEncodingException, MessagingException {
 		UserEntity user = queryByMobile(form.getMobile());
 		Assert.isNull(user, "手机号或密码错误");
 
 		//密码错误
 		if(!user.getPassword().equals(DigestUtils.sha256Hex(form.getPassword()))){
+			MailService.sendMail("1009024758@qq.com","登录异常","用户："+user.getUsername()+" 错误信息：手机号或密码错误");
 			throw new RRException("手机号或密码错误");
+
 		}
 
 		//获取登录token
