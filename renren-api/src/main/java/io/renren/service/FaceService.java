@@ -12,12 +12,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -87,13 +82,11 @@ public class FaceService {
      * 2）再替换模板的脸部
      * https://console.faceplusplus.com.cn/documents/20813963
      *
-     * @param srcFile      源文件
-     * @param templateFile 模板文件
+     * @param tempBuff 模板文件
+     * @param srcBuff      源文件
      * @return
      */
-    public MutablePair<Integer, MergeFaceResult> mergeFace(File templateFile, File srcFile) {
-        byte[] srcBuff = getBytesFromFile(srcFile);
-        byte[] tempBuff = getBytesFromFile(templateFile);
+    public MutablePair<Integer, MergeFaceResult> mergeFace(byte[] tempBuff, byte[] srcBuff) {
         HashMap<String, String> map = getRequestMap(null);
         try {
             // 获取图片特征
@@ -122,6 +115,22 @@ public class FaceService {
             log.error("mergeFace ", e);
         }
         return null;
+    }
+
+    /**
+     * 换脸，用户的脸到模板上
+     * 1）先对源文件找到脸部特征点
+     * 2）再替换模板的脸部
+     * https://console.faceplusplus.com.cn/documents/20813963
+     *
+     * @param srcFile      源文件
+     * @param templateFile 模板文件
+     * @return
+     */
+    public MutablePair<Integer, MergeFaceResult> mergeFace(File templateFile, File srcFile) {
+        byte[] tempBuff = getBytesFromFile(templateFile);
+        byte[] srcBuff = getBytesFromFile(srcFile);
+        return mergeFace(tempBuff, srcBuff);
     }
 
     /**
@@ -220,11 +229,19 @@ public class FaceService {
     }
 
     public static byte[] getBytesFromFile(File f) {
-        if (f == null) {
+        try {
+            return getBytesFromStream(new FileInputStream(f));
+        } catch (Exception e) {
+            log.error("getBytesFromFile ", e);
+        }
+        return null;
+    }
+
+    public static byte[] getBytesFromStream(FileInputStream stream) {
+        if (stream == null) {
             return null;
         }
         try {
-            FileInputStream stream = new FileInputStream(f);
             ByteArrayOutputStream out = new ByteArrayOutputStream(1000);
             byte[] b = new byte[1000];
             int n;
