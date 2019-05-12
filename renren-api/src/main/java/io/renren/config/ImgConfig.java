@@ -14,5 +14,5 @@ public class ImgConfig {
     /**
      * 图片前缀地址
      */
-    public static final String IMG_PRE = "img.smario.cn/";
+    public static final String IMG_PRE = "https://img.smario.cn/";
 }

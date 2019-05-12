@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URL;
 
 /**
  * 旷视API
@@ -49,16 +50,13 @@ public class FaceController {
                 return R.error("选择模板图片错误");
             }
 
-            URL resource = FaceService.class.getClassLoader().getResource("");
-            String path = resource.getPath() + IMG_PATH;
             String imgUrl = imgUrls[index];
             MutablePair<Integer, MergeFaceResult> pair = null;
             if (test) {
                 // 测试
-                File file = new File(path  + "src.jpg");
-                pair = faceService.mergeFace(new File(path + imgUrl), file);
+                pair = faceService.mergeFace(getData(imgUrl), getData("src.jpg"));
             } else {
-                byte[] tempBuff = FaceService.getBytesFromFile(new File(path + imgUrl));
+                byte[] tempBuff = getData(imgUrl);
                 byte[] srcBuff = FaceService.getBytesFromStream((FileInputStream) srcFile.getInputStream());
                 pair = faceService.mergeFace(tempBuff, srcBuff);
             }
@@ -70,5 +68,16 @@ public class FaceController {
             log.error("Exception ", e);
             return R.error("上传的图片检测不到脸部");
         }
+    }
+
+    public byte[] getData(String fileName) {
+        byte[] buff = new byte[]{};
+        ClassPathResource cpr = new ClassPathResource(IMG_PATH + fileName);
+        try {
+            buff = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+        } catch (Exception e) {
+            log.error("IOException", e);
+        }
+        return buff;
     }
 }
