@@ -12,11 +12,11 @@ import com.google.gson.Gson;
 
 
 import io.renren.common.annotation.SysLog;
+import io.renren.common.utils.IpUtils;
 import io.renren.modules.sys.entity.SysLogEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysLogService;
 import io.renren.common.utils.HttpContextUtils;
-import io.renren.common.utils.IPUtils;
 
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -89,7 +89,7 @@ public class SysLogAspect {
 		//获取request
 		HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
 		//设置IP地址
-		sysLog.setIp(IPUtils.getIpAddr(request));
+		sysLog.setIp(IpUtils.getIpAddr(request));
 
 		//用户名
 		String username = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUsername();
