@@ -3,6 +3,7 @@ package io.renren.service;
 import com.alibaba.fastjson.JSON;
 import io.renren.config.ImgConfig;
 import io.renren.consts.StateConsts;
+import io.renren.util.IdUtil;
 import io.renren.vo.face.DetectResult;
 import io.renren.vo.face.MergeFaceResult;
 import lombok.SneakyThrows;
@@ -16,10 +17,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import javax.net.ssl.SSLException;
 
 /**
@@ -83,7 +81,7 @@ public class FaceService {
      * https://console.faceplusplus.com.cn/documents/20813963
      *
      * @param tempBuff 模板文件
-     * @param srcBuff      源文件
+     * @param srcBuff  源文件
      * @return
      */
     public MutablePair<Integer, MergeFaceResult> mergeFace(byte[] tempBuff, byte[] srcBuff) {
@@ -107,7 +105,7 @@ public class FaceService {
                 return new MutablePair<>(StateConsts.FAIL, null);
             }
             // 图片二进制文件
-            String url = saveBase64ImageStringToImage(ImgConfig.IMG_PATH, String.valueOf(System.currentTimeMillis()), mergeFaceResult.getResult());
+            String url = saveBase64ImageStringToImage(ImgConfig.IMG_PATH, IdUtil.genId() + System.currentTimeMillis(), mergeFaceResult.getResult());
             mergeFaceResult.setResult("");
             mergeFaceResult.setImgUrl(ImgConfig.IMG_PRE + url);
             return new MutablePair<>(StateConsts.SUCC, mergeFaceResult);
