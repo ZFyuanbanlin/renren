@@ -37,9 +37,9 @@ public class FaceController {
 
     public static final String IMG_PATH = "/static/img/";
     /**
-     * 才，品，谱，型
+     * 品，才，型，谱
      */
-    private String[] imgUrls = new String[]{"temp1.jpg", "temp2.jpg", "temp3.jpg", "temp4.jpg"};
+    private String[] imgUrls = new String[]{"temp2.jpg", "temp1.jpg", "temp4.jpg", "temp3.jpg"};
 
     @PostMapping("merge")
     @ApiOperation(value = "合成图片")

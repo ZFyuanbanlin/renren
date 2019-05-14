@@ -95,6 +95,11 @@ public class FaceService {
             if (detectResult.getFaces().isEmpty()) {
                 return new MutablePair<>(StateConsts.FAIL, null);
             }
+
+//            DetectResult detect = detect(srcBuff);
+//            if (detect.getFaces().isEmpty()){
+//                return new MutablePair<>(StateConsts.FAIL, null);
+//            }
             DetectResult.FacesBean.FaceRectangleBean faceRectangle = detectResult.getFaces().get(0).getFace_rectangle();
             map.put("template_rectangle", faceRectangle.getTop() + "," + faceRectangle.getLeft() + "," + faceRectangle.getWidth() + "," + faceRectangle.getHeight());
 
