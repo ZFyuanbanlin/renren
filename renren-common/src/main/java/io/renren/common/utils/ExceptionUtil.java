@@ -1,4 +1,4 @@
-package io.renren.util;
+package io.renren.common.utils;
 
 public class ExceptionUtil {
 

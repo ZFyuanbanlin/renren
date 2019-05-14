@@ -1,6 +1,6 @@
-package io.renren.service;
+package io.renren.common.manager;
 
-import io.renren.util.ExceptionUtil;
+import io.renren.common.utils.ExceptionUtil;
 import io.renren.common.utils.MailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Service
-public class NotifyService {
+public class NotifyManager {
 
     private static final ExecutorService pool = Executors.newFixedThreadPool(5);
 

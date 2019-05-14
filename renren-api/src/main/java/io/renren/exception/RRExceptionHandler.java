@@ -10,11 +10,7 @@ package io.renren.exception;
 
 import io.renren.common.exception.RRException;
 import io.renren.common.utils.R;
-import io.renren.service.NotifyService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,8 +24,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class RRExceptionHandler {
 
-    @Autowired
-    private NotifyService notifyService;
 
     /**
      * 处理自定义异常
@@ -51,7 +45,6 @@ public class RRExceptionHandler {
     @ExceptionHandler(Exception.class)
     public R handleException(Exception e) {
         log.error(e.getMessage(), e);
-        notifyService.notify(e);
         return R.error();
     }
 }

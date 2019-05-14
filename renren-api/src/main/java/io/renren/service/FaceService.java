@@ -1,9 +1,10 @@
 package io.renren.service;
 
 import com.alibaba.fastjson.JSON;
+import io.renren.common.manager.NotifyManager;
+import io.renren.common.utils.IdUtil;
 import io.renren.config.ImgConfig;
 import io.renren.consts.StateConsts;
-import io.renren.common.utils.IdUtil;
 import io.renren.vo.face.DetectResult;
 import io.renren.vo.face.MergeFaceResult;
 import lombok.SneakyThrows;
@@ -14,12 +15,15 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.SSLException;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
-import javax.net.ssl.SSLException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * 旷视API，主要是图片处理
@@ -47,7 +51,7 @@ public class FaceService {
     public static final String MERGE_FACE_URL = "https://api-cn.faceplusplus.com/imagepp/v1/mergeface";
 
     @Autowired
-    private NotifyService notifyService;
+    private NotifyManager notifyManager;
 
     /**
      * 获取图片人脸特征
@@ -120,7 +124,7 @@ public class FaceService {
             return new MutablePair<>(StateConsts.SUCC, mergeFaceResult);
         } catch (Exception e) {
             log.error("mergeFace ", e);
-            notifyService.notify(e);
+            notifyManager.notify(e);
         }
         return null;
     }

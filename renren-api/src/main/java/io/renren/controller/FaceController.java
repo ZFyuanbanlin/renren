@@ -51,6 +51,9 @@ public class FaceController {
                 return R.error("选择模板图片错误");
             }
 
+            if (srcFile == null && !test) {
+                return R.error("上传图片出错");
+            }
             String imgUrl = imgUrls[index];
             MutablePair<Integer, MergeFaceResult> pair = null;
             if (test) {
@@ -61,7 +64,7 @@ public class FaceController {
                 byte[] srcBuff = FaceService.getBytesFromStream((FileInputStream) srcFile.getInputStream());
                 pair = faceService.mergeFace(tempBuff, srcBuff);
             }
-            if (pair == null || pair.left != 0){
+            if (pair == null || pair.left != 0) {
                 return R.error("上传的图片检测不到脸部");
             }
             return R.ok().put("url", pair.getRight().getImgUrl());
